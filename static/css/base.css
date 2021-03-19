@@ -1,0 +1,7 @@
+#mainDiv{
+    height: 500px;
+}
+#rowId{
+    display: flex;
+    justify-content: center;
+}
