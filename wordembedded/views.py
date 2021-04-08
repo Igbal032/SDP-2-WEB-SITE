@@ -44,6 +44,7 @@ class Test:
         model3 = FastText(size = 4, window = 3, min_count = 1)  # instantiate
         model3.build_vocab(sentences = data)
         model3.train(sentences=data, total_examples = len(data), epochs = 10)
+        tokenizer=BertTokenizer.from_pretrained('bert-base-uncased')
         tagged_data = [TaggedDocument(d, [i]) for i, d in enumerate(data)]
         modelDoc2vec = Doc2Vec(tagged_data, vector_size = 20, window = 2, min_count = 1, epochs = 100)
         # type(bpemb_az.emb)
@@ -53,6 +54,7 @@ class Test:
         self.model = model1
         self.model2 = model2 
         self.model3 = model3
+        self.tokenizer2 = tokenizer
         self.modelDoc2vecc = modelDoc2vec
         self.file = file
         self.keepEncode=0 
@@ -107,12 +109,12 @@ class Test:
 
     def getBertTokenizer(self,sentence):
         if sentence=="":
-            return None
+            return None 
         else:
-            tnsss=tokenizer.tokenize(sentence)
+            tnsss=self.tokenizer2.tokenize(sentence)
             print("into func :  ",tnsss)
             return tnsss
-
+ 
 global newtest
 newtest = Test() 
 def home(request): 
@@ -204,7 +206,7 @@ def getVocabSenEmbe(request):
     if score is None:
         return render(request,"SenDoc2Vec.html",{"warning":"Error occured"})  
     else:
-        return render(request,"SenDoc2Vec.html",{"resultVocDoc2Vector":score,"resultSimSenEmSim":"empty","result":"empty","resultDoc2Vec":"empty","resultSenEmSim":"empty","resultEncode":"empty","modelType":modelType}) 
+        return render(request,"SenDoc2Vec.html",{"resultVocDoc2Vector":score,"resultSimSenEmSim":"empty","result":"empty","resultDoc2Vec":"empty","resultSenEmSim":"empty","resultEncode":"empty"}) 
 
 def getSimiSenEmbe(request):
     modelType=request.GET["modelTypeHidden"]
@@ -212,19 +214,15 @@ def getSimiSenEmbe(request):
     if score is None:
         return render(request,"SenDoc2Vec.html",{"warning":"Error occured"}) 
     else:
-        return render(request,"SenDoc2Vec.html",{"resultSimSenEmSim":score,"resultVocDoc2Vector":"empty","result":"empty","resultDoc2Vector":"empty","resultEncode":"empty","modelType":modelType}) 
+        return render(request,"SenDoc2Vec.html",{"resultSimSenEmSim":score,"resultVocDoc2Vector":"empty","result":"empty","resultDoc2Vector":"empty","resultEncode":"empty"}) 
 
-
+ 
 def findBertToken(request): 
     sentenc=request.GET["sentence"]
-    print("Tokemsssswwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww:  ",sentenc)
- 
-    tkns =  newtest.getBertTokenizer(sentenc) 
-    print("Tokemsssswwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww:  ",sentenc)
-
+    tkns =  newtest.getBertTokenizer(sentenc)
     if tkns is None: 
         return render(request,"BertTokenizer.html",{"warning":"Error occured"}) 
     else:
-        return render(request,"BertTokenizer.html",{"resultBertToken":tkns,"resultVocDoc2Vector":"empty","result":"empty","resultDoc2Vector":"empty","resultEncode":"empty","modelType":modelType}) 
+        return render(request,"BertTokenizer.html",{"resultBertToken":tkns,"resultVocDoc2Vector":"empty","result":"empty","resultDoc2Vector":"empty","resultEncode":"empty"}) 
  
  
