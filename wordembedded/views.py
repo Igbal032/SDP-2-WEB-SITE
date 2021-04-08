@@ -20,8 +20,8 @@ global keepScore2
 keepScore2 =""
 class Test: 
     def __init__(self):
-        # path = r"C:\Users\ihasa\OneDrive\Desktop\dataset" 
-        path = r"C:\Users\ihasa\OneDrive\Desktop\db2" 
+        path = r"C:\Users\ihasa\OneDrive\Desktop\dataset" 
+        # path = r"C:\Users\ihasa\OneDrive\Desktop\db2" 
         file = os.listdir(path) 
         data = [] 
         for i in file:
