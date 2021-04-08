@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="main-content">
+    <div class="section__content section__content--p30">
+        <div class="container-fluid">
+            SKIP
+            <div class="row mt-3" id=optionsDiv>
+                <div id="SimilarityIdd" class="col-4"><label for="Similarity">Similarity</label><input
+                        value="Similarity" type="radio" checked name="types" id="Similarity" class="ml-3"></div>
+                <div class="col-4"><label for="MostSimilarity">Most Similarity</label><input value="MostSimilarity"
+                        type="radio" name="types" id="MostSimilarity" class="ml-3"></div>
+
+            </div>
+            <div class="row" id="SimilarityResult">
+                <div class="col-8 text-center">
+                    <h4 class="text-warning">{{emptyInputs}}</h4>
+                    <form action="findSim" method="GET">
+                        <div class="col-12 col-lg-12 mt-3">
+                            <label for="">Word - 1</label>
+                            <input type="hidden" value="sgm" name="modelTypeHidden">
+                            <input name="word1" type="text" value="{{ word1 }}" placeholder="Enter first word"
+                                class="form-control ml-4">
+                        </div>
+                        <div class="col-12 col-lg-12 mt-3">
+                            <label for="">Word - 2</label>
+                            <input name="word2" type="text" value="{{ word2 }}" placeholder="Enter second word"
+                                class="form-control ml-4">
+                        </div>
+                        <input type="submit" class="btn btn-success mt-3" value="Check">
+                    </form>
+                </div>
+
+            </div>
+
+
+            <div class="row" id="MostSimilarityResult" style="display: none;">
+                <div class="col-8 text-center">
+                    <h4 class="text-warning">{{emptyInputs}}</h4>
+                    <form action="findMostSim">
+                        <div class="col-12 col-lg-12 mt-3">
+                            <label for="">Word</label>
+                            <input type="hidden" value="sgm" name="modelTypeHidden">
+                            <input type="hidden" name="endodeornot" value="" id="endodeornotId">
+                            <input name="wordsingle" type="text" placeholder="Enter the word" class="form-control mt-2">
+                        </div>
+                        <input type="submit" class="btn btn-success mt-3" value="Check">
+                    </form>
+                </div>
+            </div>
+
+            {% if resultSim != 'empty' %}
+            <div class="col-lg-12 col-md-12 col-12">
+                <h2 class="title-1 m-b-25">Table for Similarity</h2>
+                <div class="au-card au-card--bg-blue au-card-top-countries m-b-40">
+                    <div class="au-card-inner">
+                        <div class="table-responsive">
+                            <table class="table table-top-countries">
+                                <tbody>
+                                    <tr>
+                                        <td>Score</td>
+                                        <td class="text-center">{{resultSim}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% if resultMostSim != 'empty' %}
+            <div class="col-lg-12 col-md-12 col-12">
+                <h2 class="title-1 m-b-25">Table for Most Similarity</h2>
+                <div class="au-card au-card--bg-blue au-card-top-countries m-b-40"  style="max-height: 500px; overflow-y: scroll;">
+                    <div class="au-card-inner">
+                        <div class="table-responsive">
+                            <table class="table table-top-countries">
+                                <tbody>
+                                    {% for e in resultMostSim %}
+                                    <tr>
+                                        <td>Word and score</td>
+                                        <td class="text-center">{{e}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

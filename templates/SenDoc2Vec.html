@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="main-content">
+    <div class="section__content section__content--p30">
+        <div class="container-fluid">
+            Sentence Embedding-Doc2Vec Model
+            <div class="row mt-3" id=optionsDiv>
+                <div style="display: flex;">
+                    <h4 class="text-warning">{{warning}}</h4>
+                    <form action="getVocabSenEmbe" style=" margin: 10px;">
+                        <input type="hidden"  value="senEmbDoc2Vec" name="modelTypeHidden">
+                        <button type="submit" class="btn btn-success">Get Vocablaries</button>
+                    </form>
+                    <form action="getSimiSenEmbe"  style=" margin: 10px;">
+                        <input type="hidden" value="senEmbDoc2Vec" name="modelTypeHidden">
+                        <button type="submit" class="btn btn-success">Get Similarity</button>
+                    </form>
+                </div>
+            </div>
+            {% if resultVocDoc2Vector != 'empty' %}
+            <div class="col-lg-12 col-md-12 col-12">
+                <h2 class="title-1 m-b-25">Table for Vocablaries</h2>
+                <div class="au-card au-card--bg-blue au-card-top-countries m-b-40"  style="max-height: 500px; overflow-y: scroll;">
+                    <div class="au-card-inner">
+                        <div class="table-responsive">
+                            <table class="table table-top-countries">
+                                <tbody>
+                                    {% for e in resultVocDoc2Vector %}
+                                    <!-- <div class="alert alert-primary" role="alert">
+                                        Word is <a href="#" class="alert-link">"{{e}}"</a> in Sentence Embedding-Doc2Vec Model With
+                                        Similarity.
+                                    </div> -->
+                                    <tr>
+                                        <td>Word</td>
+                                        <td class="text-center">{{e}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-8">
+
+            </div> -->
+            {% endif %}
+
+            {% if resultSimSenEmSim != 'empty' %}
+            <div class="col-lg-12 col-md-12 col-12">
+                <h2 class="title-1 m-b-25">Table for Similarity</h2>
+                <div class="au-card au-card--bg-blue au-card-top-countries m-b-40">
+                    <div class="au-card-inner">
+                        <div class="table-responsive">
+                            <table class="table table-top-countries">
+                                <tbody>
+                                    {% for e in resultSimSenEmSim %}
+                                    <tr>
+                                        <td>Score</td>
+                                        <td class="text-center">{{e}}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

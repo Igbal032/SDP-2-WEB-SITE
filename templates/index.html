@@ -1,122 +1,30 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
-<div class="row" id="rowId">
-    <div class="col-6">
-        <h4 class="text-warning">{{emptyInputs}}</h4>
-        <select onchange="changeModel(this.value)" class="form-select" id="modalTypeId" name="modelType"
-            aria-label="Default select example mt-4">
-            <option selected>Choose</option>
-            <option value="cbowm"> Continuous Bag of Words Model(CBOW)</option>
-            <option value="sgm">Skip Gram Model</option>
-            <option value="ftm">Fast Text Model</option>
-            <option value="scrum">Sentence Embedding-BytePair model</option>
-            <option value="senEmbDoc2Vec">Sentence Embedding-Doc2Vec Model</option>
-        </select>
-        <div class="row mt-3" id=optionsDiv>
-            <div id="SimilarityIdd" class="col-4"><label for="Similarity">Similarity</label><input value="Similarity"
-                    type="radio" name="types" id="Similarity" class="ml-3"></div>
-            <div class="col-4"><label for="MostSimilarity">Most Similarity</label><input value="MostSimilarity"
-                    type="radio" name="types" id="MostSimilarity" class="ml-3"></div>
-            <div style="display: none;" id="encodeId" class="col-4"><label for="Encode">Encode</label><input
-                    value="Encode" type="radio" name="types" id="Encode" class="ml-3"></div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="row" id="SimilarityId" style="display: none;">
-                    <form action="findSim" method="GET">
-                        <div class="col-12 col-lg-12 mt-3">
-                            <label for="">Word - 1</label>
-                            <input type="hidden" value="" name="modelTypeHidden" id="hiddenModalType">
-                            <input name="word1" type="text" placeholder="Enter first word" class="form-control ml-4">
-                        </div>
-                        <div class="col-12 col-lg-12 mt-3">
-                            <label for="">Word - 2</label>
-                            <input name="word2" type="text" placeholder="Enter second word" class="form-control ml-4">
-                        </div>
-                        <input type="submit" class="btn btn-success mt-3" value="Check">
-                    </form>
-
+<div class="main-content">
+    <div class="section__content section__content--p30">
+        <div class="container-fluid">
+            <div class="row d-flex justify-content-center">
+                <div class="col-8">
+                    <img src="{% static 'assets/images/ada.jpg' %}" class="w-100" alt="">
                 </div>
-                <div class="row" id="mostSimilarityId" style="display: none;">
-                    <form action="findMostSim">
-                        <div class="col-12 col-lg-12 mt-3">
-                            <label for="">Word</label>
-                            <input type="hidden" name="modelTypeHidden" value="" id="hiddenModalType2">
-                            <input type="hidden" name="endodeornot" value="" id="endodeornotId">
-                            <input name="wordsingle" type="text" placeholder="Enter the word" class="form-control mt-2">
-                        </div>
-                        <input type="submit" class="btn btn-success mt-3" value="Check">
-                    </form>
-                </div>
-                <div class="row" id="senEmbDoc2VecId" style="display: none; margin-top: 20px;">
-                    <div style="display: flex;">
-                        <form action="getVocabSenEmbe" style=" margin: 10px;">
-                            <input type="hidden" name="modelTypeHidden" id="hiddenModalType5">
-                            <button type="submit" class="btn btn-success">Get Vocablaries</button>
-                        </form>
-                        <form action="getSimiSenEmbe"  style=" margin: 10px;">
-                            <input type="hidden" name="modelTypeHidden" id="hiddenModalType6">
-                            <button type="submit" class="btn btn-success">Get Similarity</button>
-                        </form>
-                    </div>
+            </div>
+            <div class="row d-flex justify-content-center">
+                <div class="col-8 text-center">
+                    <h3>ABOUT ADA</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum esse molestias tempora mollitia
+                        nulla illo excepturi minima similique exercitationem iste obcaecati ab nostrum unde odit
+                        suscipit animi voluptates in quaerat, ipsum eos voluptate labore. Repellat deleniti debitis
+                        possimus. Adipisci architecto officiis, beatae et excepturi facilis distinctio itaque totam
+                        debitis consequatur, impedit possimus doloremque sint veniam quod saepe fugiat minima! Ut,
+                        quaerat. Cumque optio velit commodi, deserunt incidunt et exercitationem possimus non qui rem
+                        perferendis repellendus dolorum sit eum nam minus eos maxime itaque earum nemo quos inventore,
+                        excepturi ullam est. Dignissimos nihil necessitatibus deleniti corrupti ut consectetur omnis
+                        animi eius.</p>
                 </div>
             </div>
         </div>
-        <ul>
-        </ul>
-
-        {% if resultEncode != 'empty' %}
-
-        <div class="w-100" style="height: 500px; overflow-y: scroll;">
-            {{modelType}} model
-            {% for e in resultEncode %}
-            <div class="alert alert-primary" role="alert">
-                Words are <a href="#" class="alert-link">{{e}}</a>.
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        {% if result != 'empty' %}
-
-        <div class="w-100" style="height: 500px; overflow-y: scroll;">
-
-            {% for e in result %}
-            <div class="alert alert-primary" role="alert">
-                Your words and scores are <a href="#" class="alert-link">{{e}} in {{modelType}} model</a>.
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-
-        {% if resultSim != 'empty' %}
-        <div class="alert alert-primary" role="alert">
-            Your score is <a href="#" class="alert-link">{{resultSim}} in {{modelType}} model</a>.
-        </div>
-        {% endif %}
-
-        {% if resultDoc2Vector != 'empty' %}
-        <div class="w-100" style="height: 300px; overflow-y: scroll;">
-
-            {% for e in resultDoc2Vector %}
-            <div class="alert alert-primary" role="alert">
-                Word is <a href="#" class="alert-link">{{e}} </a> in {{modelType}} model
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        {% if resultSenEmSim != 'empty' %}
-        <div class="w-100" style="height: 300px; overflow-y: scroll;">
-            {% for e in resultSenEmSim %}
-            <div class="alert alert-primary" role="alert">
-               Smilarity: <a href="#" class="alert-link">{{e}}</a> in {{modelType}} model
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
     </div>
 </div>
+
 {% endblock content %}
