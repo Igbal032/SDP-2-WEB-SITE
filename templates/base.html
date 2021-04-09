@@ -36,9 +36,10 @@
             <div class="header-mobile__bar">
                 <div class="container-fluid">
                     <div class="header-mobile-inner">
-                        <a class="logo" href="index.html">
+                        <!-- <a class="logo" href="index.html">
                             <img src="{% static 'assets/images/icon/logo.png' %}" alt="CoolAdmin" />
-                        </a>
+                        </a> -->
+                        <a href="{% url 'home' %}">Senior Design Project</a>
                         <button class="hamburger hamburger--slider" type="button">
                             <span class="hamburger-box">
                                 <span class="hamburger-inner"></span>
@@ -51,16 +52,16 @@
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
                         <li>
-                            <a href="chart.html">
+                            <a href="{% url 'home' %}">
                                 <i class="fas fa-chart-bar"></i>Main Page</a>
                         </li>
                         <li>
                             <a href="{% url 'SDP2' %}">
-                                <i class="fas fa-table"></i>SDP 2</a>
+                                <i class="fas fa-table"></i>Senior Design Project</a>
                         </li>
                         <li class="has-sub">
                             <a class="js-arrow" href="#">
-                                <i class="fas fa-tachometer-alt"></i>Word Embedded</a>
+                                <i class="fas fa-tachometer-alt"></i>Word Embedding</a>
                             <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
                                 <li>
                                     <a href="{% url 'CBOW' %}">Continuous Bag of Words Model(CBOW)</a>
@@ -87,11 +88,13 @@
 
         <!-- MENU SIDEBAR-->
         <aside class="menu-sidebar d-none d-lg-block">
-            <!-- <div class="logo">
-                <a href="#">
+            <div class="logo">
+                <!-- <a href="#">
                     <img src="{% static 'assets/images/icon/logo.png' %}" alt="Cool Admin" />
-                </a>
-            </div> -->
+                </a> -->
+                <a href="{% url 'home' %}" style="font-style: oblique;">Senior Design Project</a>
+
+            </div> 
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
