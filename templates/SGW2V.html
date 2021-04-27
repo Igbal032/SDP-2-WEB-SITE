@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="main-content" style="padding-top: 50px;">
+    <div class="section__content section__content--p30">
+        <div class="container-fluid">
+            <h1 class="text-center" style="color: rgb(174,72,94);"><b>Skip Gram Word2Vec</b></h1>
+            <div class="row mt-5">
+                <div class="col-lg-4 col-md-6 col-12">
+                    <div class="row" id="SimilarityResult">
+                        <div class="col-12 text-center mt-5" style="margin: 0 auto;">
+                            <h3 class="text-center" style="color: rgb(174,72,94);">Cosine Similarity</h3>
+                            <form action="findSim" method="GET">
+                                <div class="col-12 col-lg-12 mt-3">
+                                    <label for="">Word - 1</label>
+                                    <input type="hidden" value="sgm" name="modelTypeHidden">
+                                    <input name="word1" type="text" value="{{ word1 }}" placeholder="Enter first word"
+                                        class="form-control">
+                                </div>
+                                <div class="col-12 col-lg-12 mt-3">
+                                    <label for="">Word - 2</label>
+                                    <input name="word2" type="text" value="{{ word2 }}" placeholder="Enter second word"
+                                        class="form-control">
+                                </div>
+                                <li class="mt-3" style="list-style: none;">
+                                    <span class="text-danger">{{emptyInputs1}}</span>
+                                    <span class="text-danger">{{wrongWord1}}</span>
+                                </li>
+                                <input type="submit" class="mt-3"
+                                    style="background-color: rgb(51, 97, 120);padding-left: 30px;padding-right: 30px;padding-top: 10px;padding-bottom: 10px;color: white;font-weight: bold;"
+                                    value="Check">
+                            </form>
+                        </div>
+                    </div>
+                    {% if resultSim != 'empty' %}
+                    <div class="row mt-4">
+                        <div class="col-lg-12 col-md-12 col-12" style="margin: 0 auto;">
+                            <div class="au-card au-card-top-countries m-b-40 pt-0 pb-0"
+                                style="background-color: rgb(51,97,120)">
+                                <div class="au-card-inner">
+                                    <div class="table-responsive">
+                                        <table class="table table-top-countries">
+                                            <tbody class="text-center">
+                                                <tr>
+                                                    <td style="font-size: 18px;"><b>Score</b></td>
+                                                    <td class="text-center" style="font-size: 18px;"><b>
+                                                            {{ resultSim|floatformat:2 }}
+                                                        </b></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-lg-4 col-md-6 col-12">
+                    <div class="row" id="MostSimilarityResult" style="display: block;">
+                        <div class="col-12 text-center mt-5" style="margin: 0 auto;">
+                            <h3 class="text-center" style="color: rgb(174,72,94);">Most Similarity</h3>
+                            <form action="findMostSim">
+                                <div class="col-12 col-lg-12 mt-3">
+                                    <label for="">Word</label>
+                                    <input type="hidden" value="sgm" name="modelTypeHidden">
+                                    <input name="wordsingle" value="{{ singleWord }}" type="text"
+                                        placeholder="Enter the word" class="form-control mt-2">
+                                </div>
+                                <li class="mt-3" style="list-style: none;">
+                                    <span class="text-danger">{{emptyInputs2}}</span>
+                                    <span class="text-danger">{{wrongWord2}}</span>
+                                </li>
+                                <input type="submit" class="mt-3"
+                                    style="background-color: rgb(51, 97, 120);padding-left: 30px;padding-right: 30px;padding-top: 10px;padding-bottom: 10px;color: white;font-weight: bold;"
+                                    value="Show">
+                            </form>
+                        </div>
+                    </div>
+                    {% if resultMostSim != 'empty' %}
+                    <div class="row mt-4">
+                        <div class="col-lg-12 col-md-12 col-12" style="margin: 0 auto;">
+                            <div class="au-card au-card-top-countries m-b-40 pt-0 pb-0"
+                                style="background-color: rgb(51,97,120)">
+                                <div class="au-card-inner">
+                                    <div class="table-responsive">
+                                        <table class="table table-top-countries">
+                                            <tbody class="text-center">
+                                                <tr>
+                                                    <th style="font-size: 20px;" class="text-white">Word</th>
+                                                    <th style="font-size: 20px;" class="text-white">Score</th>
+                                                </tr>
+                                                {% for e in resultMostSim %}
+                                                <tr>
+                                                    <td style="font-size: 16px;" class="text-center">{{e.0}}</td>
+                                                    <td style="font-size: 16px;" class="text-center">{{e.1|floatformat:2}}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-lg-4 col-md-6 col-12">
+                    <div class="row pb-5" id="AnalogyDivId" style="display: block;">
+                        <div class="col-12 text-center mt-5 pb-5" style="margin: 0 auto;">
+                            <h3 class="text-center" style="color: rgb(174,72,94);">Analogy</h3>
+                            <form action="findAnalogy">
+                                <div class="col-12 col-lg-12 mt-3">
+                                    <label for="">Words</label>
+                                    <input type="hidden" value="sgm" name="modelTypeHidden">
+                                    <input name="positive1" type="text" value="{{ positive1 }}"
+                                        placeholder="Enter the first positive" class="form-control">
+                                    <label for="" class="mt-2">-</label>
+                                    <input name="negative" type="text" value="{{ negative }}"
+                                        placeholder="Enter the negative" class="form-control">
+                                    <label for="" class="mt-2">+</label>
+                                    <input name="positive2" type="text" value="{{ positive2 }}"
+                                        placeholder="Enter the second positive" class="form-control">
+                                </div>
+                                <li class="mt-3" style="list-style: none;">
+                                    <span class="text-danger">{{emptyInputs3}}</span>
+                                    <span class="text-danger">{{wrongWord3}}</span>
+                                </li>
+                                <input type="submit" class="mt-3"
+                                    style="background-color: rgb(51, 97, 120);padding-left: 30px;padding-right: 30px;padding-top: 10px;padding-bottom: 10px;color: white;font-weight: bold;"
+                                    value="Show">
+                            </form>
+                        </div>
+                    </div>
+                    {% if resultForAnalogy != 'empty' %}
+                    <div class="row pb-5">
+                        <div class="col-lg-12 col-md-12 col-12 mt-4" style="margin:0 auto">
+                            <div class="au-card au-card-top-countries m-b-40" style="background-color: rgb(51,97,120)">
+                                <div class="au-card-inner">
+                                    <div class="table-responsive">
+                                        <table class="table table-top-countries">
+                                            <tbody class="text-center">
+                                                <tr>
+                                                    {% for e in resultForAnalogy %}
+                                                    <td style="font-size: 18px;">{{positive1}}</td>
+                                                    {% if resultForAnalogy != 'empty' %}
+                                                    <td style="font-size: 18px;">-</td>
+                                                    {% endif %}
+                                                    <td style="font-size: 18px;">{{negative}}</td>
+                                                    {% if resultForAnalogy != 'empty' %}
+                                                    <td style="font-size: 18px;">+</td>
+                                                    {% endif %}
+                                                    <td style="font-size: 18px;">{{positive2}}</td>
+                                                    {% if resultForAnalogy != 'empty' %}
+                                                    <td style="font-size: 18px;">=</td>
+                                                    {% endif %}
+                                                    <td style="font-size: 18px;" class="text-center">{{e.0}}</td>
+                                                    {% endfor %}
+                                                </tr>
+                                                <tr>
+                                                    {% for e in resultForAnalogy %}
+                                                    <td colspan="8" style="font-size: 18px;" class="text-center">
+                                                        {{negative}} - > {{positive1}} &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+                                                        &nbsp; {{positive2}} - > {{e.0}}</td>
+                                                    {% endfor %}
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

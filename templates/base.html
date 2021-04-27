@@ -11,7 +11,7 @@
     <meta name="keywords" content="au theme template">
 
     <!-- Title Page-->
-    <title>SDP 2</title>
+    <title>Word Embedding AZE</title>
 
     <!-- Fontfaces CSS-->
     <!-- <link href="css/font-face.css" rel="stylesheet" media="all"> -->
@@ -39,7 +39,7 @@
                         <!-- <a class="logo" href="index.html">
                             <img src="{% static 'assets/images/icon/logo.png' %}" alt="CoolAdmin" />
                         </a> -->
-                        <a href="{% url 'home' %}">Senior Design Project</a>
+                        <a href="{% url 'home' %}" style="color: rgb(174, 72, 94);font-weight: bold; font-size: 21px;">Senior Design Project</a>
                         <button class="hamburger hamburger--slider" type="button">
                             <span class="hamburger-box">
                                 <span class="hamburger-inner"></span>
@@ -51,32 +51,30 @@
             <nav class="navbar-mobile">
                 <div class="container-fluid">
                     <ul class="navbar-mobile__list list-unstyled">
-                        <li>
+                        <li class="active">
                             <a href="{% url 'home' %}">
-                                <i class="fas fa-chart-bar"></i>Main Page</a>
+                                <i class="fas fa-home"></i>Main Page</a>
                         </li>
                         <li>
                             <a href="{% url 'SDP2' %}">
-                                <i class="fas fa-table"></i>Senior Design Project</a>
+                                <i class="fas fa-book"></i>Senior Design Project</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'Authors' %}">
+                                <i class="fas fa-users"></i>Contributors</a>
                         </li>
                         <li class="has-sub">
                             <a class="js-arrow" href="#">
-                                <i class="fas fa-tachometer-alt"></i>Word Embedding</a>
+                                <i class="fas fa-won-sign"></i>Word Embedding for Azerbaijani Language</a>
                             <ul class="navbar-mobile-sub__list list-unstyled js-sub-list">
                                 <li>
-                                    <a href="{% url 'CBOW' %}">Continuous Bag of Words Model(CBOW)</a>
+                                    <a href="{% url 'CBOW' %}">CBOW Word2Vec</a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'SkipGram' %}">Skip Gram Model</a>
+                                    <a href="{% url 'SkipGram' %}">Skip Gram Word2Vec</a>
                                 </li>
                                 <li>
-                                    <a href="{% url 'FastText' %}">Fast Text Model</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'SenBytePair' %}">Sentence Embedding-BytePair model</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'SenDoc2Vec' %}">Sentence Embedding-Doc2Vec Model</a>
+                                    <a href="{% url 'FastText' %}">CBOW Fast Textl</a>
                                 </li>
                             </ul>
                         </li>
@@ -92,41 +90,51 @@
                 <!-- <a href="#">
                     <img src="{% static 'assets/images/icon/logo.png' %}" alt="Cool Admin" />
                 </a> -->
-                <a href="{% url 'home' %}" style="font-style: oblique;">Senior Design Project</a>
+                <a href="{% url 'home' %}" style="font-style: oblique;color: rgb(174, 72, 94);font-weight: bold; font-size: 21px;">Senior Design Project</a>
 
             </div> 
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
-                    <ul class="list-unstyled navbar__list">
+                    <ul class="list-unstyled navbar__list"  style="font-weight: bold;">
                         <li class="active">
-                            <a href="{% url 'home' %}">
-                                <i class="fas fa-table"></i>Main Page</a>
+                            <a href="{% url 'home' %}" style="color: rgb(51, 97, 120);">
+                                <i class="fas fa-home"></i>Main Page</a>
                         </li>
                         <li>
-                            <a href="{% url 'SDP2' %}">
-                                <i class="fas fa-table"></i>SDP 2</a>
+                            <a href="{% url 'SDP2' %}" style="color: rgb(51, 97, 120);">
+                                <i class="fas fa-book"></i>Senior Design Project</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'Authors' %}" style="color: rgb(51, 97, 120);">
+                                <i class="fas fa-users"></i>Contributors</a>
                         </li>
                         <li class="has-sub">
-                            <a class="js-arrow" href="#">
-                                <i class="fas fa-tachometer-alt"></i>Word Embedded</a>
+                            <a class="js-arrow" href="#" style="color: rgb(51, 97, 120);">
+                                <i class="fas fa-won-sign"></i>Word Embedding for Azerbaijani Language</a>
                             <ul class="list-unstyled navbar__sub-list js-sub-list">
-                                <li>
-                                    <a href="{% url 'CBOW' %}">Continuous Bag of Words Model(CBOW)</a>
+                                <li class="has-sub">
+                                    <a class="js-arrow" href="#" style="color: rgb(51, 97, 120);">
+                                        <i class="fas fa-won-sign"></i>WORD2VEC</a>
+                                    <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                        <li>
+                                            <a href="{% url 'CBOW' %}" style="color: rgb(51, 97, 120);">CBOW</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'SkipGram' %}" style="color: rgb(51, 97, 120);">Skip Gram</a>
+                                        </li>
+                                    </ul>
                                 </li>
-                                <li>
-                                    <a href="{% url 'SkipGram' %}">Skip Gram Model</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'FastText' %}">Fast Text Model</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'SenBytePair' %}">Sentence Embedding-BytePair model</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'SenDoc2Vec' %}">Sentence Embedding-Doc2Vec Model</a>
-                                </li>
-                                <li>
-                                    <a href="{% url 'BertTokenizer' %}">Bert Tokenizer</a>
+                                <li class="has-sub">
+                                    <a class="js-arrow" href="#" style="color: rgb(51, 97, 120);">
+                                        <i class="fas fa-won-sign"></i>Fast Text</a>
+                                    <ul class="list-unstyled navbar__sub-list js-sub-list">
+                                        <li>
+                                            <a href="{% url 'FastText' %}" style="color: rgb(51, 97, 120);">CBOW</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'SGFastText' %}" style="color: rgb(51, 97, 120);">Skip Gram</a>
+                                        </li>
+                                    </ul>
                                 </li>
                             </ul>
                         </li>
@@ -164,26 +172,6 @@
     <script src="{% static 'assets/vendor/chartjs/Chart.bundle.min.js' %}"></script>
     <script src="{% static 'assets/vendor/select2/select2.min.js' %}"></script>
     <script src="{% static 'assets/js/main.js' %}"></script>
-    <script>
-    $("input[name=types]").click(function () {
-        console.log($(this).val())
-            if ($(this).val() == "Similarity") {
-                $("#SimilarityResult").css({ "display": "block" })
-                $("#MostSimilarityResult").css({ "display": "none" })
-                $("#EncodeDiv").css({ "display": "none" })
-            } 
-            else if ($(this).val() == "MostSimilarity") {
-                $("#SimilarityResult").css({ "display": "none" })
-                $("#MostSimilarityResult").css({ "display": "block" })
-                $("#EncodeDiv").css({ "display": "none" })
-            } 
-            else if ($(this).val() == "Encode") {
-                $("#SimilarityResult").css({ "display": "none" })
-                $("#MostSimilarityResult").css({ "display": "none" })
-                $("#EncodeDiv").css({ "display": "block" })
-            }
-        })
-    </script>
 </body>
 
 </html>

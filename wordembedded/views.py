@@ -4,225 +4,246 @@ from django.views.generic import TemplateView
 from django.views.generic import ListView,DetailView
 from .models import wordembedded
 from flask import Flask, render_template, request, redirect
-#Import Module 
-import os 
-from nltk.tokenize import sent_tokenize, word_tokenize 
-import gensim 
-from gensim.models import Word2Vec
-from gensim.models import FastText   
-from bpemb import BPEmb
-from transformers import BertTokenizer
-#SENTENCE EMBEDDING
-#Creating Doc2Vec Model
-from gensim.models.doc2vec import Doc2Vec, TaggedDocument
-# Folder Path 
-global keepScore2 
-keepScore2 =""
-class Test: 
+from gensim.models import KeyedVectors
+class Models: 
     def __init__(self):
-        path = r"C:\Users\ihasa\OneDrive\Desktop\dataset" 
-        # path = r"C:\Users\ihasa\OneDrive\Desktop\db2" 
-        file = os.listdir(path) 
-        data = [] 
-        for i in file:
-            if i.endswith(".txt"):
-                opening = open(path+"\\"+ i, "r", encoding = "utf-8")
-                reading = opening.read()
-                f = reading.replace("\n", " ")
-                #Tokenization 
-                #Iterating through each sentence in the file 
-                for i in sent_tokenize(f): 
-                    temp = []
-                    #Tokenizing the sentence into words 
-                    for j in word_tokenize(i): 
-                        temp.append(j.lower())
-                    data.append(temp)
-        model1 = gensim.models.Word2Vec(data, min_count = 1, size = 100, window = 5) 
-        #Creating Skip Gram model 
-        model2 = gensim.models.Word2Vec(data, min_count = 1, size = 100, window = 5, sg = 1) 
-        #Creating FastText Model
-        model3 = FastText(size = 4, window = 3, min_count = 1)  # instantiate
-        model3.build_vocab(sentences = data)
-        model3.train(sentences=data, total_examples = len(data), epochs = 10)
-        tokenizer=BertTokenizer.from_pretrained('bert-base-uncased')
-        tagged_data = [TaggedDocument(d, [i]) for i, d in enumerate(data)]
-        modelDoc2vec = Doc2Vec(tagged_data, vector_size = 20, window = 2, min_count = 1, epochs = 100)
-        # type(bpemb_az.emb)
-        self.bpemb_az = BPEmb(lang="az") 
-        self.bpemb_az1 = BPEmb(lang="az", vs=100000) 
-        # self.bpemb_az.vectors.shape
-        self.model = model1
-        self.model2 = model2 
-        self.model3 = model3
-        self.tokenizer2 = tokenizer
-        self.modelDoc2vecc = modelDoc2vec
-        self.file = file
-        self.keepEncode=0 
-    def modelDoc2vec(self):
-        vocabs = self.modelDoc2vecc.wv.vocab
-        return vocabs
-
-    def modelSenEmSim(self):  
-        for i in self.file: 
-            if i.endswith(".txt"):
-                test_doc = word_tokenize(i.lower())
-                test_doc_vector = self.modelDoc2vecc.infer_vector(test_doc)
-        similarity = self.modelDoc2vecc.docvecs.most_similar(positive = [test_doc_vector])
-        return similarity
-   
-    def getModelSimilarity(self,wordOne,wordTwo,modelType):
-        if wordOne == '' or wordTwo=='' or modelType=='':
-            return None
+        #Creating CBOW WORD2VEC model 
+        modelW2VCbow = KeyedVectors.load_word2vec_format("CBOWw2v.txt")
+        #Creating Skip Gram WORD2VEC model 
+        modelW2VSG = KeyedVectors.load_word2vec_format("SGw2v.txt")
+        #Creating CBOW FastText Model
+        modelFTCBOW = KeyedVectors.load_word2vec_format("CBOWFT.txt")
+        #Creating Skip Gram FastText Model
+        modelFTSG = KeyedVectors.load_word2vec_format("SGFT.txt")
+        self.modelW2VCbow = modelW2VCbow 
+        self.modelW2VSG = modelW2VSG 
+        self.modelFTCBOW = modelFTCBOW
+        self.modelFTSG = modelFTSG
+    
+    def getAnalogy(self,positive1,positive2,negative,modelType):
+        if positive1 == '' or positive2=='' or modelType=='' or negative=='': 
+            return None 
         elif modelType == "cbown":
-            similarity = self.model.similarity(wordOne,wordTwo)
-            return similarity
+            try:
+                analogy = self.modelW2VCbow.most_similar(positive = [positive1.lower(),positive2.lower()], negative = [negative.lower()],topn=1)
+                return analogy
+            except:
+                analogy = "error"
+                return analogy
         elif modelType == "sgm":
-            similarity = self.model2.similarity(wordOne,wordTwo)
-            return similarity
-        elif modelType == "ftm":
-            similarity = self.model3.similarity(wordOne,wordTwo)
-            return similarity
+            try:
+                analogy = self.modelW2VSG.most_similar(positive = [positive1.lower(),positive2.lower()], negative = [negative.lower()],topn=1)
+                return analogy
+            except:
+                analogy = "error"
+                return analogy
+        elif modelType == "ftm": 
+            try:
+                analogy = self.modelFTCBOW.most_similar(positive = [positive1.lower(),positive2.lower()], negative = [negative.lower()],topn=1)
+                return analogy
+            except:
+                analogy = "error"
+                return analogy
+        elif modelType == "sgftm": 
+            try:
+                analogy = self.modelFTSG.most_similar(positive = [positive1.lower(),positive2.lower()], negative = [negative.lower()],topn=1)
+                return analogy
+            except:
+                analogy = "error"
+                return analogy
 
-    def getModelMostSimilarity(self,Word,modelType,encodeornot):
+    def getModelSimilarity(self,wordOne,wordTwo,modelType):
+        if wordOne == '' or wordTwo=='' or modelType=='': 
+            return None 
+        elif modelType == "cbown":
+            try:
+                similarity = self.modelW2VCbow.similarity(wordOne.lower(),wordTwo.lower())
+                return similarity
+            except:
+               similarity = "error"
+               return similarity
+        elif modelType == "sgm":
+            try:
+                similarity = self.modelW2VSG.similarity(wordOne.lower(),wordTwo.lower())
+                return similarity
+            except:
+                similarity = "error"
+                return similarity
+        elif modelType == "ftm": 
+            try:
+                similarity = self.modelFTCBOW.similarity(wordOne.lower(),wordTwo.lower())
+                return similarity
+            except:
+                similarity = "error"
+                return similarity
+        elif modelType == "sgftm": 
+            try:
+                print("sgft try  in icindeyem")
+                similarity = self.modelFTSG.similarity(wordOne.lower(),wordTwo.lower())
+                return similarity
+            except:
+                print("sgft exception  in icindeyem")
+                similarity = "error"
+                return similarity
+
+    def getModelMostSimilarity(self,Word,modelType):
         if Word=='' or modelType=='':
             return None
         elif modelType == "cbown":
-            mostSimilarity = self.model.wv.most_similar(Word)
-            self.keepEncode = 0 
-            return mostSimilarity
+            try:
+                mostSimilarity = self.modelW2VCbow.wv.most_similar(Word.lower(), topn=5)
+                return mostSimilarity
+            except:
+                mostSimilarity = "error"
+                return mostSimilarity
         elif modelType == "sgm":
-            mostSimilarity = self.model2.wv.most_similar(Word)
-            self.keepEncode = 0
-            return mostSimilarity
+            try:
+                mostSimilarity = self.modelW2VSG.wv.most_similar(Word.lower(), topn=5)
+                return mostSimilarity
+            except:
+                mostSimilarity = "error"
+                return mostSimilarity
         elif modelType == "ftm":
-            mostSimilarity = self.model3.wv.most_similar(Word)
-            self.keepEncode = 0
-            return mostSimilarity
-        elif modelType == "scrum" and encodeornot != "Encode":
-            mostSimilarity = self.bpemb_az.most_similar(Word, topn=10)
-            self.keepEncode = 0
-            return mostSimilarity
-        elif modelType == "scrum" and encodeornot == "Encode":
-            mostSimilarity = self.bpemb_az1.encode(Word) 
-            self.keepEncode = 1 
-            return mostSimilarity
+            try:
+                mostSimilarity = self.modelFTCBOW.wv.most_similar(Word.lower(), topn=5)
+                return mostSimilarity
+            except:
+                mostSimilarity = "error"
+                return mostSimilarity
+        elif modelType == "sgftm":
+            try:
+                mostSimilarity = self.modelFTSG.wv.most_similar(Word.lower(), topn=5)
+                return mostSimilarity
+            except:
+                mostSimilarity = "error"
+                return mostSimilarity
 
-    def getBertTokenizer(self,sentence):
-        if sentence=="":
-            return None 
-        else:
-            tnsss=self.tokenizer2.tokenize(sentence)
-            print("into func :  ",tnsss)
-            return tnsss
- 
-global newtest
-newtest = Test() 
+global newModels
+newModels = Models() 
 def home(request): 
-    return render(request,"index.html",{"resultSim":"empty","result":"empty","resultEncode":"empty","resultDoc2Vector":"empty","resultSenEmSim":"empty"})
+    return render(request,"index.html",{"resultSim":"empty","result":"empty"})
 
-def sdp2Page(request):
-    return render(request,"SDP2.html")
+def sdpPage(request):
+    return render(request,"SDP.html")
 
-def CBOWPage(request):
-    return render(request,"CBOW.html",{"resultSim":"empty"})
+def CBOWW2VPage(request):
+    return render(request,"CBOWW2V.html",{"resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"})
 
-def SkipGramPage(request):
-    return render(request,"SkipGram.html")
+def SGW2VPage(request):
+    return render(request,"SGW2V.html",{"resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"})
 
-def FastTextPage(request):
-    return render(request,"FastText.html")
+def CBOWFTPage(request):
+    return render(request,"CBOWFT.html",{"resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"})
  
-def SenBytePairPage(request):
-    return render(request,"SenBytePair.html")
-
-def SenDoc2VecPage(request):
-    return render(request,"SenDoc2Vec.html")
-
-def BertTokenizerPage(request):
-    return render(request,"BertTokenizer.html")
-
+def AuthorsPage(request):
+    return render(request,"authors.html")
+  
+def SGFTPage(request):
+    return render(request,"SGFT.html",{"resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"})
+ 
      
 def findSim(request):
     getWord1=request.GET["word1"]
     getWord2=request.GET["word2"]
     modelType=request.GET["modelTypeHidden"]
-    score =  newtest.getModelSimilarity(getWord1,getWord2,modelType)
+    score =  newModels.getModelSimilarity(getWord1,getWord2,modelType)
     if score is None:
         if modelType == 'cbown':
-            print("sasa",score)
-            return render(request,"CBOW.html",{"emptyInputs":"Please select model or fill all inputs","resultDoc2Vector":"empty","resultSenEmSim":"empty","resultSim":"empty","result":"empty","resultEncode":"empty"}) 
+            return render(request,"CBOWW2V.html",{"emptyInputs1":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
         elif modelType == "sgm":
-            return render(request,"SkipGram.html",{"emptyInputs":"Please select model or fill all inputs","resultDoc2Vector":"empty","resultSenEmSim":"empty","resultSim":"empty","result":"empty","resultEncode":"empty"}) 
+            return render(request,"SGW2V.html",{"emptyInputs1":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
         elif modelType == "ftm":
-            return render(request,"FastText.html",{"emptyInputs":"Please select model or fill all inputs","resultDoc2Vector":"empty","resultSenEmSim":"empty","resultSim":"empty","result":"empty","resultEncode":"empty"}) 
-        else:
-            return render(request,"index.html",{"emptyInputs":"Please select model or fill all inputs","resultDoc2Vector":"empty","resultSenEmSim":"empty","resultSim":"empty","result":"empty","resultEncode":"empty"})
+            return render(request,"CBOWFT.html",{"emptyInputs1":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == "sgftm":
+            return render(request,"SGFT.html",{"emptyInputs1":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+    elif score == "error":
+        if modelType == 'cbown':
+            return render(request,"CBOWW2V.html",{"wrongWord1":"Entered word(s) is/are not in data","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == 'sgm':
+            return render(request,"SGW2V.html",{"wrongWord1":"Entered word(s) is/are not in data","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == "ftm":
+            return render(request,"CBOWFT.html",{"wrongWord1":"Entered word(s) is/are not in data","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == "sgftm":
+            return render(request,"SGFT.html",{"emptyInputs1":"Entered word(s) is/are not in data","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
     else:
         if modelType == 'cbown':
-            print("sasa",score)
-            return render(request,"CBOW.html",{"resultSim":score,"word1":getWord1,"word2":getWord2, "resultMostSim":"empty","resultEncode":"empty","resultDoc2Vector":"empty","resultSenEmSim":"empty","modelType":modelType}) 
+            return render(request,"CBOWW2V.html",{"resultSim":score,"word1":getWord1,"word2":getWord2, "resultMostSim":"empty","modelType":modelType,"resultForAnalogy":"empty"}) 
         elif modelType == 'sgm':
-            return render(request,"SkipGram.html",{"resultSim":score,"word1":getWord1,"word2":getWord2, "resultMostSim":"empty","resultEncode":"empty","resultDoc2Vector":"empty","resultSenEmSim":"empty","modelType":modelType}) 
+            return render(request,"SGW2V.html",{"resultSim":score,"word1":getWord1,"word2":getWord2, "resultMostSim":"empty","modelType":modelType,"resultForAnalogy":"empty"}) 
         elif modelType == "ftm":
-            return render(request,"FastText.html",{"resultSim":score,"word1":getWord1,"word2":getWord2, "resultMostSim":"empty","resultEncode":"empty","resultDoc2Vector":"empty","resultSenEmSim":"empty","modelType":modelType}) 
-        else:
-            return render(request,"index.html",{"resultSim":score,"resultMostSim":"empty","resultEncode":"empty","resultDoc2Vector":"empty","resultSenEmSim":"empty","modelType":modelType}) 
+            return render(request,"CBOWFT.html",{"resultSim":score,"word1":getWord1,"word2":getWord2, "resultMostSim":"empty","modelType":modelType,"resultForAnalogy":"empty"}) 
+        elif modelType == "sgftm":
+            return render(request,"SGFT.html",{"resultSim":score,"word1":getWord1,"word2":getWord2, "resultMostSim":"empty","modelType":modelType,"resultForAnalogy":"empty"}) 
 
 def findMostSim(request):  
-    singleWord=request.GET["wordsingle"]
+    singleWord=request.GET["wordsingle"] 
     modelType=request.GET["modelTypeHidden"] 
-    endodeornot = request.GET["endodeornot"] 
-    listOfResult =  newtest.getModelMostSimilarity(singleWord,modelType,endodeornot)
+    listOfResult =  newModels.getModelMostSimilarity(singleWord,modelType)
     if listOfResult is None:
         if modelType == 'cbown':
-            return render(request,"CBOW.html",{"emptyInputs":"Please select model or fill all inputs","resultDoc2Vector":"empty","resultSenEmSim":"empty","resultSim":"empty","result":"empty","resultEncode":"empty"}) 
+            return render(request,"CBOWW2V.html",{"emptyInputs2":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
         elif modelType == 'sgm':
-            return render(request,"SkipGram.html",{"emptyInputs":"Please select model or fill all inputs","resultDoc2Vector":"empty","resultSenEmSim":"empty","resultSim":"empty","result":"empty","resultEncode":"empty"}) 
+            return render(request,"SGW2V.html",{"emptyInputs2":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
         elif modelType == 'ftm':
-            return render(request,"FastText.html",{"emptyInputs":"Please select model or fill all inputs","resultDoc2Vector":"empty","resultSenEmSim":"empty","resultSim":"empty","result":"empty","resultEncode":"empty"}) 
-        elif modelType == 'scrum':
-            return render(request,"SenBytePair.html",{"emptyInputs":"Please select model or fill all inputs","resultDoc2Vector":"empty","resultSenEmSim":"empty","resultSim":"empty","result":"empty","resultEncode":"empty"}) 
+            return render(request,"CBOWFT.html",{"emptyInputs2":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == 'sgftm':
+            return render(request,"SGFT.html",{"emptyInputs2":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
         else:
-            return render(request,"index.html",{"emptyInputs":"Please select model or fill all inputs","resultDoc2Vector":"empty","resultSenEmSim":"empty","resultSim":"empty","result":"empty","resultEncode":"empty"})
+            return render(request,"index.html",{"emptyInputs":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"})
+    elif listOfResult == "error":
+        if modelType == 'cbown':
+            return render(request,"CBOWW2V.html",{"wrongWord2":"Entered word(s) is/are not in data","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == 'sgm':
+            return render(request,"SGW2V.html",{"wrongWord2":"Entered word(s) is/are not in data","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == 'ftm':
+            return render(request,"CBOWFT.html",{"wrongWord2":"Entered word(s) is/are not in data","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == "sgftm":
+            return render(request,"SGFT.html",{"wrongWord2":"Entered word(s) is/are not in data","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
     else:
         if modelType == 'cbown':
-            return render(request,"CBOW.html",{"resultMostSim":listOfResult,"resultSim":"empty","resultDoc2Vec":"empty","resultSenEmSim":"empty","resultEncode":"empty","modelType":modelType}) 
+            return render(request,"CBOWW2V.html",{"resultMostSim":listOfResult,"singleWord":singleWord,"resultSim":"empty","modelType":modelType,"resultForAnalogy":"empty"}) 
         elif modelType == 'sgm':
-            return render(request,"SkipGram.html",{"resultMostSim":listOfResult,"resultSim":"empty","resultDoc2Vec":"empty","resultSenEmSim":"empty","resultEncode":"empty","modelType":modelType}) 
+            return render(request,"SGW2V.html",{"resultMostSim":listOfResult,"singleWord":singleWord,"resultSim":"empty","modelType":modelType,"resultForAnalogy":"empty"}) 
         elif modelType == 'ftm':
-            return render(request,"FastText.html",{"resultMostSim":listOfResult,"resultSim":"empty","resultDoc2Vec":"empty","resultSenEmSim":"empty","resultEncode":"empty","modelType":modelType}) 
-        elif modelType == 'scrum':
-            if newtest.keepEncode == 1:
-                return render(request,"SenBytePair.html",{"resultEncode":listOfResult,"resultMost":"empty","resultSim":"empty","modelType":modelType}) 
-            else: 
-                return render(request,"SenBytePair.html",{"resultMost":listOfResult,"resultSim":"empty","resultDoc2Vec":"empty","resultSenEmSim":"empty","resultEncode":"empty","modelType":modelType}) 
-            return render(request,"SenBytePair.html",{"resultMostSim":listOfResult,"resultSim":"empty","resultDoc2Vec":"empty","resultSenEmSim":"empty","resultEncode":"empty","modelType":modelType}) 
+            return render(request,"CBOWFT.html",{"resultMostSim":listOfResult,"singleWord":singleWord,"resultSim":"empty","modelType":modelType,"resultForAnalogy":"empty"}) 
+        elif modelType == 'sgftm':
+            return render(request,"SGFT.html",{"resultMostSim":listOfResult,"singleWord":singleWord,"resultSim":"empty","modelType":modelType,"resultForAnalogy":"empty"}) 
         else: 
-            return render(request,"index.html",{"emptyInputs":"Error Occured","resultSim":"empty","resultDoc2Vec":"empty","resultSenEmSim":"empty","resultEncode":"empty","modelType":modelType}) 
+            return render(request,"index.html",{"emptyInputs":"Error Occured","resultSim":"empty","resultMostSim":"empty","modelType":modelType,"resultForAnalogy":"empty"}) 
   
-def getVocabSenEmbe(request):
-    score =  newtest.modelDoc2vec()
+def findAnalogy(request):
     modelType=request.GET["modelTypeHidden"]  
-    if score is None:
-        return render(request,"SenDoc2Vec.html",{"warning":"Error occured"})  
+    positive1=request.GET["positive1"]  
+    positive2=request.GET["positive2"]  
+    negative=request.GET["negative"] 
+    analogyRes = newModels.getAnalogy(positive1,positive2,negative,modelType)
+    print(analogyRes)
+    if analogyRes is None:
+        if modelType == 'cbown': 
+            return render(request,"CBOWW2V.html",{"emptyInputs3":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == 'sgm':
+            return render(request,"SGW2V.html",{"emptyInputs3":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == 'sgm':
+            return render(request,"SGW2V.html",{"emptyInputs3":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == 'ftm':
+            return render(request,"CBOWFT.html",{"emptyInputs3":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == 'sgftm':
+            return render(request,"SGFT.html",{"emptyInputs3":"Please, fill the inputs","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+    elif analogyRes == "error":
+        if modelType == 'cbown':
+            return render(request,"CBOWW2V.html",{"wrongWord3":"Entered word(s) is/are not in data","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == 'sgm':
+            return render(request,"SGW2V.html",{"wrongWord3":"Entered word(s) is/are not in data","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == "ftm":
+            return render(request,"CBOWFT.html",{"wrongWord3":"Entered word(s) is/are not in data","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
+        elif modelType == "sgftm":
+            return render(request,"SGFT.html",{"wrongWord3":"Entered word(s) is/are not in data","resultSim":"empty","resultMostSim":"empty","resultForAnalogy":"empty"}) 
     else:
-        return render(request,"SenDoc2Vec.html",{"resultVocDoc2Vector":score,"resultSimSenEmSim":"empty","result":"empty","resultDoc2Vec":"empty","resultSenEmSim":"empty","resultEncode":"empty"}) 
-
-def getSimiSenEmbe(request):
-    modelType=request.GET["modelTypeHidden"]
-    score =  newtest.modelSenEmSim()
-    if score is None:
-        return render(request,"SenDoc2Vec.html",{"warning":"Error occured"}) 
-    else:
-        return render(request,"SenDoc2Vec.html",{"resultSimSenEmSim":score,"resultVocDoc2Vector":"empty","result":"empty","resultDoc2Vector":"empty","resultEncode":"empty"}) 
-
- 
-def findBertToken(request): 
-    sentenc=request.GET["sentence"]
-    tkns =  newtest.getBertTokenizer(sentenc)
-    if tkns is None: 
-        return render(request,"BertTokenizer.html",{"warning":"Error occured"}) 
-    else:
-        return render(request,"BertTokenizer.html",{"resultBertToken":tkns,"resultVocDoc2Vector":"empty","result":"empty","resultDoc2Vector":"empty","resultEncode":"empty"}) 
- 
- 
+        if modelType == 'cbown':
+            return render(request,"CBOWW2V.html",{"resultForAnalogy":analogyRes,"positive1":positive1,"positive2":positive2,"negative":negative,"resultSim":"empty","resultMostSim":"empty","modelType":modelType}) 
+        elif modelType == 'sgm':
+            return render(request,"SGW2V.html",{"resultForAnalogy":analogyRes,"positive1":positive1,"positive2":positive2,"negative":negative,"resultSim":"empty","resultMostSim":"empty","modelType":modelType}) 
+        elif modelType == 'ftm':
+            return render(request,"CBOWFT.html",{"resultForAnalogy":analogyRes,"positive1":positive1,"positive2":positive2,"negative":negative,"resultSim":"empty","resultMostSim":"empty","modelType":modelType}) 
+        elif modelType == 'sgftm':
+            return render(request,"SGFT.html",{"resultForAnalogy":analogyRes,"positive1":positive1,"positive2":positive2,"negative":negative,"resultSim":"empty","resultMostSim":"empty","modelType":modelType})  
